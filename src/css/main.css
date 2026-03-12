@@ -1,0 +1,13 @@
+/* Common styles */
+@import url('./debug.css');
+
+@import 'modern-normalize';
+@import url('izitoast/dist/css/iziToast.min.css');
+@import url('simplelightbox/dist/simple-lightbox.min.css');
+
+@import url('./reset.css');
+@import url('./common.css');
+
+@import url('./search-form.css');
+@import url('./gallery.css');
+@import url('./loader.css');
