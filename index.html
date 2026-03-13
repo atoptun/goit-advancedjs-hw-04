@@ -15,9 +15,10 @@
 
     <script type="module" crossorigin src="/goit-advancedjs-hw-04/index.js"></script>
     <link rel="modulepreload" crossorigin href="/goit-advancedjs-hw-04/assets/vendor-CDxLX-s2.js">
-    <link rel="stylesheet" crossorigin href="/goit-advancedjs-hw-04/assets/index-UX_70RAw.css">
+    <link rel="stylesheet" crossorigin href="/goit-advancedjs-hw-04/assets/index-D3z50MGy.css">
   </head>
   <body>
+    <header class="header">
     <div class="container">
       <form class="form search-form js-search-form">
         <input
@@ -26,13 +27,19 @@
           name="query"
           aria-label="Search query"
           placeholder="Search images..."
+          value="42"
         />
-        <button class="search-btn" type="submit">Search</button>
+        <button class="btn" type="submit">Search</button>
       </form>
+    </div>
+    </header>
+    <div class="container">
       <ul class="gallery js-gallery"></ul>
+  
+      <div class="loader is-hidden js-loader"></div>
+
+      <button class="btn load-more-btn is-hidden js-load-more-btn" type="button">Load more</button>
     </div>
 
-    <!-- <span class="loader is-hidden js-loader">Wait</span> -->
-    <div class="loader is-hidden js-loader"></div>
   </body>
 </html>
