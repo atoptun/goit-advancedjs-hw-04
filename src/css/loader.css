@@ -4,7 +4,10 @@
   border-radius: 50%;
   position: relative;
   animation: rotate 1s linear infinite;
+
+  margin: 16px auto;
 }
+
 .loader::before,
 .loader::after {
   content: '';
@@ -50,13 +53,3 @@
   }
 }
 
-.loader {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50% -50%);
-}
-
-.loader.is-hidden {
-  display: none;
-}

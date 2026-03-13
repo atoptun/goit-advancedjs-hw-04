@@ -1,9 +1,18 @@
+.header {
+  position: sticky;
+  top: 0;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  z-index: 100;
+  background-color: #fff;
+}
+
 .search-form {
   display: flex;
   gap: 8px;
 
   width: 371px;
-  margin: 16px auto;
+  margin: 0 auto;
 }
 
 .search-field {
@@ -30,7 +39,7 @@
   color: rgba(128, 128, 128, 1);
 }
 
-.search-btn {
+.btn {
   min-width: 91px;
   padding: 8px 16px;
 
@@ -45,12 +54,17 @@
   transition: background-color 250ms ease;
 }
 
-.search-btn:hover,
-.search-btn:focus {
+.btn:hover,
+.btn:focus {
   background-color: rgba(108, 140, 255, 1);
 }
 
-.search-btn[disabled] {
+.btn[disabled] {
   background-color: rgb(131, 131, 133);
   cursor: auto;
+}
+
+.load-more-btn {
+  display: block;
+  margin: 16px auto;
 }

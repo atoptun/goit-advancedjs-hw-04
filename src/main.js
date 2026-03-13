@@ -6,6 +6,10 @@ import * as render from './js/render-functions';
 
 const refs = {
   form: document.querySelector('.js-search-form'),
+  formSubmitBtn: document.querySelector(
+    '.js-search-form > button[type="submit"]'
+  ),
+  loadMoreBtn: document.querySelector('.js-load-more-btn'),
 };
 
 iziToast.settings({
@@ -17,47 +21,96 @@ iziToast.settings({
   position: 'topRight',
 });
 
-const onSearchSubmit = e => {
+let currentPage = 1;
+let perPage = 15;
+let currentQuery = null;
+let galleryCartHeight = 0;
+
+const checkLoadMoreBtn = totalImages => {
+  const totalPages = Math.ceil(totalImages / perPage);
+  // console.log(`Page ${currentPage} of ${totalPages}`);
+  if (totalPages > currentPage) {
+    render.showLoadMoreButton();
+  } else {
+    render.hideLoadMoreButton();
+    iziToast.warning({
+      message: `We're sorry, but you've reached the end of search results.`,
+    });
+  }
+};
+
+const onSearchFormSubmit = async e => {
   e.preventDefault();
 
   const form = e.target;
-  const query = form.elements.query.value.trim();
-  if (!query) {
-    iziToast.error({
-      message: 'Query must be!',
-      position: 'topRight',
-    });
+  currentQuery = form.elements.query.value.trim();
+  if (!currentQuery) {
+    iziToast.error({ message: 'Query must be!' });
     return;
   }
 
+  currentPage = 1;
   render.clearGallery();
   render.showLoader();
-  const btn = e.submitter || form.querySelector('button[type="submit"]');
-  if (btn) btn.disabled = true;
+  render.hideLoadMoreButton();
+  refs.formSubmitBtn && (refs.formSubmitBtn.disabled = true);
 
-  getImagesByQuery(query)
-    .then(data => {
-      if (data.length === 0) {
-        iziToast.warning({
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-          position: 'topRight',
-        });
-        return;
-      }
+  try {
+    const data = await getImagesByQuery(currentQuery, currentPage, perPage);
 
-      render.createGallery(data);
-    })
-    .catch(err => {
-      iziToast.error({
-        message: err.message,
-        position: 'topRight',
+    if (data.totalHits === 0) {
+      iziToast.warning({
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
       });
-    })
-    .finally(() => {
-      if (btn) btn.disabled = false;
-      render.hideLoader();
-    });
+      return;
+    }
+
+    render.createGallery(data.hits);
+    checkLoadMoreBtn(data.totalHits);
+    galleryCartHeight = render.getGalleryCartHeight();
+  } catch (error) {
+    iziToast.error({ message: error.message });
+  } finally {
+    refs.formSubmitBtn && (refs.formSubmitBtn.disabled = false);
+    render.hideLoader();
+  }
 };
 
-refs.form.addEventListener('submit', onSearchSubmit);
+const onLoadMoreBtnClick = async e => {
+  refs.formSubmitBtn && (refs.formSubmitBtn.disabled = true);
+  render.hideLoadMoreButton();
+  render.showLoader();
+  currentPage++;
+
+  try {
+    const data = await getImagesByQuery(currentQuery, currentPage, perPage);
+
+    if (data.totalHits === 0) {
+      iziToast.warning({
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
+      });
+      return;
+    }
+
+    render.createGallery(data.hits);
+    checkLoadMoreBtn(data.totalHits);
+
+    setTimeout(() => {
+      window.scrollBy({
+        top: galleryCartHeight * 2,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }, 500);
+  } catch (error) {
+    iziToast.error({ message: error.message });
+  } finally {
+    refs.formSubmitBtn && (refs.formSubmitBtn.disabled = false);
+    render.hideLoader();
+  }
+};
+
+refs.form.addEventListener('submit', onSearchFormSubmit);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
